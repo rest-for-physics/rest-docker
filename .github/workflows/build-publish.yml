@@ -3,6 +3,10 @@ name: Build and Publish Docker Image
 on:
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   IMAGE_NAME: rest-for-physics/base
   VERSION_TAG: latest
@@ -16,7 +20,7 @@ jobs:
       - uses: pre-commit/action@v3.0.0
 
   build-and-push-image:
-    runs-on: ${{ github.event.inputs.target }}
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
@@ -24,6 +28,13 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
+      - name: Log in to the GitHub Container registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: rest-for-physics
+          password: ${{ secrets.REST_DOCKER_PACKAGES_PUSH }}
 
       - name: Build parent to base image
         uses: docker/build-push-action@v3
