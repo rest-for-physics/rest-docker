@@ -31,6 +31,14 @@ ENV PATH ${ROOTSYS}/bin:$PATH
 ENV LD_LIBRARY_PATH ${ROOTSYS}/lib:$LD_LIBRARY_PATH
 ENV PYTHONPATH ${ROOTSYS}/lib:$PYTHONPATH
 
+# Entrypoint
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+RUN echo "source docker-entrypoint.sh" >> ~/.bashrc
+
+WORKDIR /
+
+ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["/bin/bash"]
 
 FROM root as root-garfield
