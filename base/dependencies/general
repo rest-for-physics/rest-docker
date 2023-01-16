@@ -2,3 +2,4 @@ binutils
 build-essential
 git
 curl
+libmpfr-dev
