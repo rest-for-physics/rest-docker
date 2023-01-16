@@ -1,2 +1,4 @@
+binutils
+build-essential
 git
 curl
