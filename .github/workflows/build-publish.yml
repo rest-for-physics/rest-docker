@@ -40,6 +40,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
+          file: base/Dockerfile
           push: false
           pull: false
           tags: |
@@ -47,14 +48,24 @@ jobs:
 
       - name: Generate final base Dockerfile with Geant4 dataset environment variables
         run: |
-          python3 scripts/geant4-dataset-dockerfile.py --image action/${{ env.IMAGE_NAME }}:${{ env.VERSION_TAG }} --output Dockerfile-geant4-env
+          python3 base/scripts/geant4-dataset-dockerfile.py --image action/${{ env.IMAGE_NAME }}:${{ env.VERSION_TAG }} --output Dockerfile-base-geant4-env
 
       - name: Build and Push base image
         uses: docker/build-push-action@v3
         with:
           context: .
-          file: Dockerfile-geant4-env
+          file: Dockerfile-base-geant4-env
           push: true
           pull: false
           tags: |
             ghcr.io/${{ env.IMAGE_NAME }}:${{ env.VERSION_TAG }}
+
+      - name: Build and Push rest-for-physics framework image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: framework/Dockerfile
+          push: true
+          pull: false
+          tags: |
+            ghcr.io/rest-for-physics/framework:latest
