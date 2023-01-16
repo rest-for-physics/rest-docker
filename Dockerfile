@@ -35,16 +35,14 @@ CMD ["/bin/bash"]
 
 FROM root as root-garfield
 
-ARG GARFIELD_VERSION=master
-ENV GARFIELD_VERSION=${GARFIELD_VERSION}
-RUN echo GARFIELD_VERSION: ${GARFIELD_VERSION}
+ARG GARFIELD_VERSION=e0a9f171
 
 RUN git clone https://gitlab.cern.ch/garfield/garfieldpp.git $INSTALL_DIR/garfieldpp/source && \
     cd $INSTALL_DIR/garfieldpp/source && git reset --hard ${GARFIELD_VERSION} && \
     mkdir -p $INSTALL_DIR/garfieldpp/build && cd $INSTALL_DIR/garfieldpp/build && \
     cmake ../source/ -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR/garfieldpp \
     -DWITH_EXAMPLES=OFF -DCMAKE_CXX_STANDARD=17 && \
-    make -j install && \
+    make -j8 install && \
     rm -rf $INSTALL_DIR/garfieldpp/build $INSTALL_DIR/garfieldpp/source
 
 ENV GARFIELD_INSTALL $INSTALL_DIR/garfieldpp
@@ -52,3 +50,28 @@ ENV CMAKE_PREFIX_PATH=$INSTALL_DIR/garfieldpp:$CMAKE_PREFIX_PATH
 ENV HEED_DATABASE $INSTALL_DIR/garfieldpp/share/Heed/database
 ENV LD_LIBRARY_PATH $INSTALL_DIR/garfieldpp/lib:$LD_LIBRARY_PATH
 ENV ROOT_INCLUDE_PATH $INSTALL_DIR/garfieldpp/include:$ROOT_INCLUDE_PATH
+
+FROM root-garfield as root-geant4-garfield
+
+ARG GEANT4_VERSION=v11.1.0
+
+COPY dependencies /tmp/dependencies
+
+RUN apt-get update -qq && \
+    xargs -a /tmp/dependencies/geant4 apt-get install -y && \
+    rm -rf /tmp/* && \
+    apt-get autoremove -y && \
+    apt-get clean -y && \
+    rm -rf /var/cache/apt/archives/* && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN git clone https://github.com/Geant4/geant4.git $INSTALL_DIR/geant4/source --branch=${GEANT4_VERSION} && \
+    cd $INSTALL_DIR/geant4/source && \
+    mkdir -p $INSTALL_DIR/geant4/build && cd $INSTALL_DIR/geant4/build && \
+    cmake ../source/ -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR/geant4 -DCMAKE_CXX_STANDARD=17 \
+    -DGEANT4_INSTALL_DATA=ON -DGEANT4_USE_GDML=ON -DGEANT4_USE_QT=ON -DGEANT4_INSTALL_EXAMPLES=OFF && \
+    make -j8 install && \
+    rm -rf $INSTALL_DIR/geant4/build $INSTALL_DIR/geant4/source
+
+ENV PATH $INSTALL_DIR/geant4/bin:$PATH
+ENV LD_LIBRARY_PATH $INSTALL_DIR/geant4/lib:$LD_LIBRARY_PATH
