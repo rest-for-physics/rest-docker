@@ -26,8 +26,7 @@ def main():
 
     args = parser.parse_args()
 
-    result = subprocess.run(f"docker --version".split(),
-                            stdout=subprocess.PIPE)
+    result = subprocess.run(f"docker --version".split(), stdout=subprocess.PIPE)
     version = result.stdout.decode("utf-8")
     print(version)
 
