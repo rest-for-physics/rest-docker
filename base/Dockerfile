@@ -36,6 +36,10 @@ COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 RUN echo "source docker-entrypoint.sh" >> ~/.bashrc
 
+# Version script
+COPY scripts/version.sh /usr/local/bin/version.sh
+RUN chmod +x /usr/local/bin/version.sh
+
 WORKDIR /
 
 ENTRYPOINT ["docker-entrypoint.sh"]
@@ -44,6 +48,7 @@ CMD ["/bin/bash"]
 FROM root as root-garfield
 
 ARG GARFIELD_VERSION=e0a9f171
+ENV GARFIELD_VERSION=${GARFIELD_VERSION}
 
 RUN git clone https://gitlab.cern.ch/garfield/garfieldpp.git /tmp/garfieldpp/source && \
     cd /tmp/garfieldpp/source && git reset --hard ${GARFIELD_VERSION} && \
