@@ -3,3 +3,4 @@ build-essential
 git
 curl
 libmpfr-dev
+libcurl4-openssl-dev
