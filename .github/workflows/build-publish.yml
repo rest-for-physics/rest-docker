@@ -24,6 +24,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+    needs: pre-commit
 
     steps:
       - name: Checkout repository
@@ -39,8 +40,7 @@ jobs:
       - name: Build parent to base image
         uses: docker/build-push-action@v3
         with:
-          context: .
-          file: base/Dockerfile
+          context: base
           push: false
           pull: false
           tags: |
@@ -63,8 +63,7 @@ jobs:
       - name: Build and Push rest-for-physics framework image
         uses: docker/build-push-action@v3
         with:
-          context: .
-          file: framework/Dockerfile
+          context: framework
           push: true
           pull: false
           tags: |
