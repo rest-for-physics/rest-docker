@@ -1,4 +1,4 @@
-FROM rest-for-physics/base:latest
+FROM ghcr.io/rest-for-physics/base:latest
 
 RUN git clone https://github.com/rest-for-physics/framework.git /tmp/rest-for-physics/source && \
     cd /tmp/rest-for-physics/source && python pull-submodules.py --latest:master && \
