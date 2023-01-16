@@ -26,7 +26,8 @@ def main():
 
     args = parser.parse_args()
 
-    result = subprocess.run(f"docker --version".split(), stdout=subprocess.PIPE)
+    result = subprocess.run(f"docker --version".split(),
+                            stdout=subprocess.PIPE)
     version = result.stdout.decode("utf-8")
     print(version)
 
@@ -50,15 +51,14 @@ def main():
 
     # create directories in case they do not exist
     dir_path = os.path.dirname(args.output)
-    if not os.path.exists(dir_path):
+    if len(dir_path) != 0 and not os.path.exists(dir_path):
         os.makedirs(dir_path)
 
-    # Create Dockerfile (labels will be inherited)
+    # Create Dockerfile (labels will be inherited), ENTRYPOINT and CMD will be preserved
     with open(args.output, "w") as f:
         f.write(f"FROM {docker_image}\n\n")
         for variable, value in env_variables.items():
             f.write(f"ENV {variable}={value}\n")
-        # ENTRYPOINT and CMD will be preserved
 
 
 if __name__ == "__main__":
