@@ -1,0 +1,49 @@
+name: Build and Publish Docker Image
+
+on:
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: rest-for-physics/base
+  VERSION_TAG: latest
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
+      - uses: pre-commit/action@v3.0.0
+
+  build-and-push-image:
+    runs-on: ${{ github.event.inputs.target }}
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Build parent to base image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: false
+          pull: false
+          tags: |
+            action/${{ env.IMAGE_NAME }}:${{ env.VERSION_TAG }}
+
+      - name: Generate final base Dockerfile with Geant4 dataset environment variables
+        run: |
+          python3 scripts/geant4-dataset-dockerfile.py --image action/${{ env.IMAGE_NAME }}:${{ env.VERSION_TAG }} --output Dockerfile-geant4-env
+
+      - name: Build and Push base image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: Dockerfile-geant4-env
+          push: false
+          pull: false
+          tags: |
+            ghcr.io/${{ env.IMAGE_NAME }}:${{ env.VERSION_TAG }}
