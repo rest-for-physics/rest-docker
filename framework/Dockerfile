@@ -13,3 +13,7 @@ ENV ROOT_INCLUDE_PATH $REST_PATH/include:$ROOT_INCLUDE_PATH
 ENV PATH $REST_PATH/bin:$PATH
 ENV LD_LIBRARY_PATH $REST_PATH/lib:$LD_LIBRARY_PATH
 ENV PYTHONPATH $REST_PATH/python-bindings:$PYTHONPATH
+
+# Replace docker entrypoint to source rest-for-physics
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
