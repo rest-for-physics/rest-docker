@@ -49,20 +49,20 @@ FROM root as root-garfield
 
 ARG GARFIELD_VERSION=e0a9f171
 ENV GARFIELD_VERSION=${GARFIELD_VERSION}
+ENV GARFIELD_INSTALL $INSTALL_DIR/garfieldpp
 
 RUN git clone https://gitlab.cern.ch/garfield/garfieldpp.git /tmp/garfieldpp/source && \
     cd /tmp/garfieldpp/source && git reset --hard ${GARFIELD_VERSION} && \
     mkdir -p /tmp/garfieldpp/build && cd /tmp/garfieldpp/build && \
-    cmake ../source/ -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR/garfieldpp \
+    cmake ../source/ -DCMAKE_INSTALL_PREFIX=$GARFIELD_INSTALL \
     -DWITH_EXAMPLES=OFF -DCMAKE_CXX_STANDARD=17 && \
     make -j8 install && \
     rm -rf /tmp/garfieldpp/build /tmp/garfieldpp/source
 
-ENV GARFIELD_INSTALL $INSTALL_DIR/garfieldpp
-ENV CMAKE_PREFIX_PATH=$INSTALL_DIR/garfieldpp:$CMAKE_PREFIX_PATH
-ENV HEED_DATABASE $INSTALL_DIR/garfieldpp/share/Heed/database
-ENV LD_LIBRARY_PATH $INSTALL_DIR/garfieldpp/lib:$LD_LIBRARY_PATH
-ENV ROOT_INCLUDE_PATH $INSTALL_DIR/garfieldpp/include:$ROOT_INCLUDE_PATH
+ENV CMAKE_PREFIX_PATH=$GARFIELD_INSTALL:$CMAKE_PREFIX_PATH
+ENV HEED_DATABASE $GARFIELD_INSTALL/share/Heed/database
+ENV LD_LIBRARY_PATH $GARFIELD_INSTALL/lib:$LD_LIBRARY_PATH
+ENV ROOT_INCLUDE_PATH $GARFIELD_INSTALL/include:$ROOT_INCLUDE_PATH
 
 FROM root-garfield as root-geant4-garfield
 
