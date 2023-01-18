@@ -20,7 +20,7 @@ jobs:
       - uses: pre-commit/action@v3.0.0
 
   build-and-push-image:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
