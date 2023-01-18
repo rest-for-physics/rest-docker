@@ -5,7 +5,7 @@ ENV REST_PATH /usr/local/rest-for-physics
 RUN git clone https://github.com/rest-for-physics/framework.git /tmp/rest-for-physics/source && \
     cd /tmp/rest-for-physics/source && python pull-submodules.py --latest:master && \
     mkdir /tmp/rest-for-physics/build && cd /tmp/rest-for-physics/build && \
-    cmake /tmp/rest-for-physics/source -DCMAKE_INSTALL_PREFIX=${REST_PATH} -DREST_ALL_LIBS=ON -DREST_G4=ON && \
+    cmake /tmp/rest-for-physics/source -DCMAKE_INSTALL_PREFIX=${REST_PATH} -DREST_WELCOME=OFF -DREST_ALL_LIBS=ON -DREST_G4=ON && \
     make -j8 install && \
     rm -rf /tmp/rest-for-physics/source /tmp/rest-for-physics/build
 
