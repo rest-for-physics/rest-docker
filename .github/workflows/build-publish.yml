@@ -19,7 +19,7 @@ jobs:
       - uses: pre-commit/action@v3.0.0
 
   build-and-push-root-garfield:
-    name: "ROOT and Garfield++ images"
+    name: "ROOT and ROOT/Garfield++ images"
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -58,7 +58,7 @@ jobs:
             ghcr.io/rest-for-physics/root-garfield:${{ env.VERSION_TAG }}
 
   build-and-push-root-geant4:
-    name: "ROOT and Geant4 image"
+    name: "Geant4 image"
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -104,7 +104,7 @@ jobs:
 
 
   build-and-push-root-garfield-geant4:
-    name: "ROOT, Garfield++ and Geant4 image"
+    name: "Geant4 image with Garfield++"
     runs-on: ubuntu-latest
     permissions:
       contents: read
