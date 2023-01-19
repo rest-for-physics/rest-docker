@@ -1,4 +1,4 @@
-FROM ghcr.io/rest-for-physics/base:latest
+FROM ghcr.io/rest-for-physics/root-garfield-geant4:latest
 
 ENV REST_PATH /usr/local/rest-for-physics
 

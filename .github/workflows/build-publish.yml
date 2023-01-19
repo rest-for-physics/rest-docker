@@ -18,7 +18,8 @@ jobs:
       - uses: actions/setup-python@v3
       - uses: pre-commit/action@v3.0.0
 
-  build-and-push-image:
+  build-and-push-root-garfield:
+    name: "ROOT and Garfield++ images"
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -56,17 +57,26 @@ jobs:
           tags: |
             ghcr.io/rest-for-physics/root-garfield:${{ env.VERSION_TAG }}
 
-      - name: Build root and geant4 image without geant4 env variables
-        uses: docker/build-push-action@v3
-        with:
-          context: base
-          push: false
-          pull: false
-          target: geant4
-          tags: |
-            ghcr.io/rest-for-physics/root-geant4:${{ env.VERSION_TAG }}
+  build-and-push-root-geant4:
+    name: "ROOT and Geant4 image"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    needs: build-and-push-root-garfield
 
-      - name: Build root, garfield and geant4 image without geant4 env variables
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log in to the GitHub Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: rest-for-physics
+          password: ${{ secrets.REST_DOCKER_PACKAGES_PUSH }}
+
+      - name: Build root and geant4 image without geant4 env variables
         uses: docker/build-push-action@v3
         with:
           context: base
@@ -76,12 +86,11 @@ jobs:
           build-args: |
             USE_GARFIELD=""
           tags: |
-            ghcr.io/rest-for-physics/root-garfield-geant4:${{ env.VERSION_TAG }}
+            ghcr.io/rest-for-physics/root-geant4:${{ env.VERSION_TAG }}
 
       - name: Generate final base Dockerfile with Geant4 dataset environment variables
         run: |
           python3 base/scripts/geant4-dataset-dockerfile.py --image ghcr.io/rest-for-physics/root-geant4:${{ env.VERSION_TAG }} --output Dockerfile-root-geant4
-          python3 base/scripts/geant4-dataset-dockerfile.py --image ghcr.io/rest-for-physics/root-garfield-geant4:${{ env.VERSION_TAG }} --output Dockerfile-root-garfield-geant4
 
       - name: Build and Push root-geant4 image
         uses: docker/build-push-action@v3
@@ -93,6 +102,40 @@ jobs:
           tags: |
             ghcr.io/rest-for-physics/root-geant4:${{ env.VERSION_TAG }}
 
+
+  build-and-push-root-garfield-geant4:
+    name: "ROOT, Garfield++ and Geant4 image"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    needs: build-and-push-root-garfield
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log in to the GitHub Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: rest-for-physics
+          password: ${{ secrets.REST_DOCKER_PACKAGES_PUSH }}
+
+      - name: Build root, garfield and geant4 image without geant4 env variables
+        uses: docker/build-push-action@v3
+        with:
+          context: base
+          push: false
+          pull: false
+          target: geant4
+          tags: |
+            ghcr.io/rest-for-physics/root-garfield-geant4:${{ env.VERSION_TAG }}
+
+      - name: Generate final base Dockerfile with Geant4 dataset environment variables
+        run: |
+          python3 base/scripts/geant4-dataset-dockerfile.py --image ghcr.io/rest-for-physics/root-garfield-geant4:${{ env.VERSION_TAG }} --output Dockerfile-root-garfield-geant4
+
       - name: Build and Push root-garfield-geant4 image
         uses: docker/build-push-action@v3
         with:
@@ -103,11 +146,31 @@ jobs:
           tags: |
             ghcr.io/rest-for-physics/root-garfield-geant4:${{ env.VERSION_TAG }}
 
+
+  build-and-push-framework:
+    name: "REST-for-Physics framework image"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    needs: build-and-push-root-garfield-geant4
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log in to the GitHub Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: rest-for-physics
+          password: ${{ secrets.REST_DOCKER_PACKAGES_PUSH }}
+
       - name: Build and Push rest-for-physics framework image
         uses: docker/build-push-action@v3
         with:
           context: framework
           push: true
-          pull: false
+          pull: true
           tags: |
             ghcr.io/rest-for-physics/framework:latest
