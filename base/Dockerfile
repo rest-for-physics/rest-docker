@@ -45,6 +45,9 @@ WORKDIR /
 ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["/bin/bash"]
 
+# Can be set to either "" or "-garfield". In the CI it is set to both in order to "skip build stages" (https://github.com/docker/cli/issues/1134)
+ARG USE_GARFIELD="-garfield"
+
 FROM root as root-garfield
 
 ARG GARFIELD_VERSION=e0a9f171
@@ -64,7 +67,7 @@ ENV HEED_DATABASE $GARFIELD_INSTALL/share/Heed/database
 ENV LD_LIBRARY_PATH $GARFIELD_INSTALL/lib:$LD_LIBRARY_PATH
 ENV ROOT_INCLUDE_PATH $GARFIELD_INSTALL/include:$ROOT_INCLUDE_PATH
 
-FROM root-garfield as root-geant4-garfield
+FROM root${USE_GARFIELD} as geant4
 
 ARG GEANT4_VERSION=v11.0.3
 

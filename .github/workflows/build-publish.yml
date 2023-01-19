@@ -8,7 +8,6 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  IMAGE_NAME: rest-for-physics/base
   VERSION_TAG: latest
 
 jobs:
@@ -37,28 +36,72 @@ jobs:
           username: rest-for-physics
           password: ${{ secrets.REST_DOCKER_PACKAGES_PUSH }}
 
-      - name: Build parent to base image
+      - name: Build root image
+        uses: docker/build-push-action@v3
+        with:
+          context: base
+          push: true
+          pull: true
+          target: root
+          tags: |
+            ghcr.io/rest-for-physics/root:${{ env.VERSION_TAG }}
+
+      - name: Build root and garfield image
+        uses: docker/build-push-action@v3
+        with:
+          context: base
+          push: true
+          pull: false
+          target: root-garfield
+          tags: |
+            ghcr.io/rest-for-physics/root-garfield:${{ env.VERSION_TAG }}
+
+      - name: Build root and geant4 image without geant4 env variables
         uses: docker/build-push-action@v3
         with:
           context: base
           push: false
           pull: false
+          target: geant4
           tags: |
-            action/${{ env.IMAGE_NAME }}:${{ env.VERSION_TAG }}
+            ghcr.io/rest-for-physics/root-geant4:${{ env.VERSION_TAG }}
+
+      - name: Build root, garfield and geant4 image without geant4 env variables
+        uses: docker/build-push-action@v3
+        with:
+          context: base
+          push: false
+          pull: false
+          target: geant4
+          build-args: |
+            USE_GARFIELD=""
+          tags: |
+            ghcr.io/rest-for-physics/root-garfield-geant4:${{ env.VERSION_TAG }}
 
       - name: Generate final base Dockerfile with Geant4 dataset environment variables
         run: |
-          python3 base/scripts/geant4-dataset-dockerfile.py --image action/${{ env.IMAGE_NAME }}:${{ env.VERSION_TAG }} --output Dockerfile-base-geant4-env
+          python3 base/scripts/geant4-dataset-dockerfile.py --image ghcr.io/rest-for-physics/root-geant4:${{ env.VERSION_TAG }} --output Dockerfile-root-geant4
+          python3 base/scripts/geant4-dataset-dockerfile.py --image ghcr.io/rest-for-physics/root-garfield-geant4:${{ env.VERSION_TAG }} --output Dockerfile-root-garfield-geant4
 
-      - name: Build and Push base image
+      - name: Build and Push root-geant4 image
         uses: docker/build-push-action@v3
         with:
           context: .
-          file: Dockerfile-base-geant4-env
+          file: Dockerfile-root-geant4
           push: true
           pull: false
           tags: |
-            ghcr.io/${{ env.IMAGE_NAME }}:${{ env.VERSION_TAG }}
+            ghcr.io/rest-for-physics/root-geant4:${{ env.VERSION_TAG }}
+
+      - name: Build and Push root-garfield-geant4 image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: Dockerfile-root-garfield-geant4
+          push: true
+          pull: false
+          tags: |
+            ghcr.io/rest-for-physics/root-garfield-geant4:${{ env.VERSION_TAG }}
 
       - name: Build and Push rest-for-physics framework image
         uses: docker/build-push-action@v3
