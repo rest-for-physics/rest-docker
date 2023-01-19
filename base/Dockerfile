@@ -66,7 +66,7 @@ ENV ROOT_INCLUDE_PATH $GARFIELD_INSTALL/include:$ROOT_INCLUDE_PATH
 
 FROM root-garfield as root-geant4-garfield
 
-ARG GEANT4_VERSION=v11.1.0
+ARG GEANT4_VERSION=v11.0.3
 
 COPY dependencies /tmp/dependencies
 
