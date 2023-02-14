@@ -120,7 +120,7 @@ jobs:
         with:
           context: base
           push: false
-          pull: false
+          pull: true
           target: geant4
           build-args: |
             USE_GARFIELD="-garfield"
