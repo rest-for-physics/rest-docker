@@ -123,6 +123,8 @@ jobs:
           push: false
           pull: false
           target: geant4
+          build-args: |
+            USE_GARFIELD="-garfield"
           tags: |
             ghcr.io/rest-for-physics/root-garfield-geant4:${{ env.VERSION_TAG }}
 
