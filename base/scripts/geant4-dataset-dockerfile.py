@@ -6,7 +6,6 @@ import argparse
 
 
 def main():
-
     parser = argparse.ArgumentParser(
         description="Generate Dockerfile from base dockerfile (input argument) adding Geant4 datasets as ENV variables"
     )
