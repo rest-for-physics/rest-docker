@@ -71,6 +71,8 @@ FROM root${USE_GARFIELD} as geant4
 
 ARG GEANT4_VERSION=v11.0.3
 
+RUN ls -lht $INSTALL_DIR
+
 COPY dependencies /tmp/dependencies
 
 RUN apt-get update -qq && \
