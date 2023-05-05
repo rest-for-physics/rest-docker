@@ -10,6 +10,8 @@ These images contain the full dependencies for installation of the framework. Th
 
 ## Images
 
+All images are based on Ubuntu 22.04.
+
 The following base images are available:
 
 | Image | Description |
