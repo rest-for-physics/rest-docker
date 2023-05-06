@@ -1,0 +1,48 @@
+name: Build and publish framework Docker image
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Build and publish base Docker images"]
+    types:
+      - completed
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  VERSION_TAG: latest
+
+jobs:
+  build-and-push-framework:
+    name: "REST-for-Physics framework image"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    needs:
+      - build-and-push-root-geant4
+      - build-and-push-root-garfield-geant4
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log in to the GitHub Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: rest-for-physics
+          password: ${{ secrets.REST_DOCKER_PACKAGES_PUSH }}
+
+      - name: Build and Push rest-for-physics framework image
+        uses: docker/build-push-action@v3
+        with:
+          context: framework
+          push: true
+          pull: true
+          tags: |
+            ghcr.io/rest-for-physics/framework:latest

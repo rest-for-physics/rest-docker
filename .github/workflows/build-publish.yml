@@ -1,4 +1,4 @@
-name: Build and Publish Docker Image
+name: Build and publish base Docker images
 
 on:
   workflow_dispatch:
@@ -12,8 +12,8 @@ env:
 
 jobs:
 
-  build-and-push-root-garfield:
-    name: "ROOT and ROOT/Garfield++ images"
+  build-and-push-root:
+    name: "ROOT image"
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -40,6 +40,24 @@ jobs:
           tags: |
             ghcr.io/rest-for-physics/root:${{ env.VERSION_TAG }}
 
+  build-and-push-root-garfield:
+    name: "ROOT and Garfield++ image"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log in to the GitHub Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: rest-for-physics
+          password: ${{ secrets.REST_DOCKER_PACKAGES_PUSH }}
+
       - name: Build root and garfield image
         uses: docker/build-push-action@v3
         with:
@@ -56,7 +74,7 @@ jobs:
     permissions:
       contents: read
       packages: write
-    needs: build-and-push-root-garfield
+    needs: build-and-push-root
 
     steps:
       - name: Checkout repository
@@ -140,32 +158,3 @@ jobs:
           pull: false
           tags: |
             ghcr.io/rest-for-physics/root-garfield-geant4:${{ env.VERSION_TAG }}
-
-
-  build-and-push-framework:
-    name: "REST-for-Physics framework image"
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    needs: build-and-push-root-garfield-geant4
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Log in to the GitHub Container registry
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: rest-for-physics
-          password: ${{ secrets.REST_DOCKER_PACKAGES_PUSH }}
-
-      - name: Build and Push rest-for-physics framework image
-        uses: docker/build-push-action@v3
-        with:
-          context: framework
-          push: true
-          pull: true
-          tags: |
-            ghcr.io/rest-for-physics/framework:latest
