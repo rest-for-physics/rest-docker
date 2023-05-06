@@ -23,9 +23,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    needs:
-      - build-and-push-root-geant4
-      - build-and-push-root-garfield-geant4
 
     steps:
       - name: Checkout repository
