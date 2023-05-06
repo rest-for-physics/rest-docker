@@ -33,7 +33,7 @@ jobs:
       - name: Build root image
         uses: docker/build-push-action@v3
         with:
-          context: base
+          context: root
           push: true
           pull: true
           target: root
@@ -46,6 +46,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+    needs: build-and-push-root
 
     steps:
       - name: Checkout repository
@@ -61,7 +62,7 @@ jobs:
       - name: Build root and garfield image
         uses: docker/build-push-action@v3
         with:
-          context: base
+          context: garfield
           push: true
           pull: false
           target: root-garfield
@@ -74,6 +75,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+    needs: build-and-push-root
 
     steps:
       - name: Checkout repository
@@ -88,12 +90,12 @@ jobs:
 
       - name: Modify base Dockerfile to not use Garfield
         run: |
-          sed -i 's/FROM root-garfield as geant4/FROM root as geant4/' base/Dockerfile
+          sed -i 's|FROM ghcr.io/rest-for-physics/root-garfield:latest|FROM ghcr.io/rest-for-physics/root:latest|' base/Dockerfile
 
       - name: Build root and geant4 image without geant4 env variables
         uses: docker/build-push-action@v3
         with:
-          context: base
+          context: geant4
           push: false
           pull: false
           target: geant4
@@ -121,6 +123,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+    needs: build-and-push-root-garfield
 
     steps:
       - name: Checkout repository
@@ -136,7 +139,7 @@ jobs:
       - name: Build root, garfield and geant4 image without geant4 env variables
         uses: docker/build-push-action@v3
         with:
-          context: base
+          context: geant4
           push: false
           pull: true
           target: geant4
