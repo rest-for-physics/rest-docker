@@ -69,7 +69,7 @@ jobs:
             ghcr.io/rest-for-physics/root-garfield:${{ env.VERSION_TAG }}
 
   build-and-push-root-geant4:
-    name: "Geant4 image"
+    name: "ROOT and Geant4 image"
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -116,7 +116,7 @@ jobs:
 
 
   build-and-push-root-garfield-geant4:
-    name: "Geant4 image with Garfield++"
+    name: "ROOT, Geant4 and Garfield++ image"
     runs-on: ubuntu-latest
     permissions:
       contents: read
