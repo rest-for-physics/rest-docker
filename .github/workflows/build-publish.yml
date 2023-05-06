@@ -69,6 +69,10 @@ jobs:
           username: rest-for-physics
           password: ${{ secrets.REST_DOCKER_PACKAGES_PUSH }}
 
+      - name: Modify base Dockerfile to not use Garfield
+        run: |
+          sed -i 's/FROM root-garfield as geant4/FROM root as geant4/' base/Dockerfile
+
       - name: Build root and geant4 image without geant4 env variables
         uses: docker/build-push-action@v3
         with:
@@ -76,8 +80,6 @@ jobs:
           push: false
           pull: false
           target: geant4
-          build-args: |
-            USE_GARFIELD=""
           tags: |
             ghcr.io/rest-for-physics/root-geant4:${{ env.VERSION_TAG }}
 
@@ -122,8 +124,6 @@ jobs:
           push: false
           pull: true
           target: geant4
-          build-args: |
-            USE_GARFIELD="-garfield"
           tags: |
             ghcr.io/rest-for-physics/root-garfield-geant4:${{ env.VERSION_TAG }}
 
