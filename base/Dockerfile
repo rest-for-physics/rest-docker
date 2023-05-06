@@ -5,7 +5,7 @@ LABEL maintainer.email="luis.antonio.obis@gmail.com"
 
 LABEL org.opencontainers.image.source="https://github.com/rest-for-physics/rest-docker"
 
-ARG ROOT_BINARY=root_v6.28.00.Linux-ubuntu22-x86_64-gcc11.3.tar.gz
+ARG ROOT_BINARY=root_v6.28.02.Linux-ubuntu22-x86_64-gcc11.3.tar.gz
 ARG INSTALL_DIR=/usr/local
 
 ENV LANG=C.UTF-8
