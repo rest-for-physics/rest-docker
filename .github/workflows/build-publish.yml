@@ -36,7 +36,6 @@ jobs:
           context: root
           push: true
           pull: true
-          target: root
           tags: |
             ghcr.io/rest-for-physics/root:${{ env.VERSION_TAG }}
 
@@ -64,8 +63,7 @@ jobs:
         with:
           context: garfield
           push: true
-          pull: false
-          target: root-garfield
+          pull: true
           tags: |
             ghcr.io/rest-for-physics/root-garfield:${{ env.VERSION_TAG }}
 
@@ -97,8 +95,7 @@ jobs:
         with:
           context: geant4
           push: false
-          pull: false
-          target: geant4
+          pull: true
           tags: |
             ghcr.io/rest-for-physics/root-geant4:${{ env.VERSION_TAG }}
 
@@ -142,7 +139,6 @@ jobs:
           context: geant4
           push: false
           pull: true
-          target: geant4
           tags: |
             ghcr.io/rest-for-physics/root-garfield-geant4:${{ env.VERSION_TAG }}
 
