@@ -101,7 +101,7 @@ jobs:
 
       - name: Generate final base Dockerfile with Geant4 dataset environment variables
         run: |
-          python3 base/scripts/geant4-dataset-dockerfile.py --image ghcr.io/rest-for-physics/root-geant4:${{ env.VERSION_TAG }} --output Dockerfile-root-geant4
+          python3 geant4/scripts/geant4-dataset-dockerfile.py --image ghcr.io/rest-for-physics/root-geant4:${{ env.VERSION_TAG }} --output Dockerfile-root-geant4
 
       - name: Build and Push root-geant4 image
         uses: docker/build-push-action@v3
@@ -144,7 +144,7 @@ jobs:
 
       - name: Generate final base Dockerfile with Geant4 dataset environment variables
         run: |
-          python3 base/scripts/geant4-dataset-dockerfile.py --image ghcr.io/rest-for-physics/root-garfield-geant4:${{ env.VERSION_TAG }} --output Dockerfile-root-garfield-geant4
+          python3 geant4/scripts/geant4-dataset-dockerfile.py --image ghcr.io/rest-for-physics/root-garfield-geant4:${{ env.VERSION_TAG }} --output Dockerfile-root-garfield-geant4
 
       - name: Build and Push root-garfield-geant4 image
         uses: docker/build-push-action@v3
