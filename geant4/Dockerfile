@@ -1,6 +1,6 @@
 FROM ghcr.io/rest-for-physics/root-garfield:latest
 
-ARG GEANT4_VERSION=v11.0.4
+ARG GEANT4_VERSION=v11.0.3
 
 RUN ls -lht $INSTALL_DIR
 
